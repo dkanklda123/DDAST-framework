@@ -309,16 +309,8 @@ class Att(nn.Module):
 
         return x_out1
 
-
-# In[ ]:
-
-#设备
 dev = torch.device(
     "cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-
-
-# In[ ]:
-
 
 class HeadAttention(nn.Module):
     def __init__(self, input_shape, ratio=2):
@@ -357,13 +349,6 @@ class AdditiveMatric(nn.Module):
 
         return torch.mean(self.attention_weights, dim=0)
         
-
-
-
-# In[ ]:
-
-
-# @save
 # @save
 def masked_softmax(X, valid_lens):
     """通过在最后一个轴上掩蔽元素来执行softmax操作"""
@@ -445,8 +430,6 @@ class DTWAttention(nn.Module):
         # values的形状：(batch_size，“键－值”对的个数，值的维度)
         return torch.bmm(self.dropout(self.attention_weights), x)
 
-
-# In[ ]:
 
 class nconv(nn.Module):
     def __init__(self):
@@ -708,9 +691,6 @@ class SELayer(nn.Module):
         return x * y.expand_as(x)
 
 
-# In[ ]:
-
-
 class GraphSleepBlock(nn.Module):
     def __init__(self, input_shape, nums_vec, num_hidden, time_conv_strides, head, **kwargs):
         super(GraphSleepBlock, self).__init__(**kwargs)
@@ -759,8 +739,6 @@ class GraphSleepBlock(nn.Module):
         return end_output
 
 
-# In[ ]:
-
 class GraphSleepNet(nn.Module):
     
     def __init__(self, input_shape, nums_vec, gw_time, in_dim, num_hidden, time_conv_strides, head, **kwargs):
@@ -782,13 +760,8 @@ class GraphSleepNet(nn.Module):
         block_out = torch.flatten(block_out, 1)
         block_out = self.fc1(block_out)
         block_out = torch.cat((block_out, gw_value), axis=1)
-        
-
+    
         return block_out
-
-
-
-# In[ ]:
 
 
 def AddContext(x, context, label=False, dtype=float):
@@ -868,7 +841,6 @@ class kFoldGenerator():
     def getY_one_hot(self):
         All_Y = self.getY()
         return np.argmax(All_Y, axis=1)
-
 
 
 
@@ -1034,26 +1006,16 @@ for fold_feature in range(10):
                     torch.float32).to(device), pseudo_trg_labels.to(device), trg_dtw.to(torch.float32).to(device)
 
 
-
                 # pass data through the source model network.
                 src_feat = feature_extractor(src_data, src_dtw,1)
-                
                 src_pred = classifier_1(src_feat)
 
                 # pass data through the target model network.
                 trg_feat = feature_extractor(trg_data, trg_dtw,0)
-                
                 trg_pred = classifier_1(trg_feat)
 
-
-
-
-
-
                 # Compute Source Classification Loss
-
                 src_clf_loss = criterion(src_pred, src_labels)
-
 
                 # Compute target classification loss
                 trg_clf_loss = criterion(trg_pred, pseudo_trg_labels.long())
@@ -1062,7 +1024,6 @@ for fold_feature in range(10):
                 loss_lmmd = lmmd_loss.get_loss(src_feat, trg_feat, torch.argmax(src_labels, axis=1),
                                                torch.nn.functional.softmax(trg_pred, dim=1))
                 lambd = 2 / (1 + math.exp(-10 * (epoch) / 15)) - 1
-
 
 
             # total loss calucalations
